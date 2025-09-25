@@ -15,17 +15,16 @@ def preprocess_palm_image(image_path):
     gray = cv2.equalizeHist(gray)
 
 
-    # Apply Sobel filter
-    sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-    sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
-    sobel_edges = cv2.convertScaleAbs(sobel_x + sobel_y)
+    # Apply CLAHE for local contrast enhancement 
+    clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(8,8))
+    enhanced = clahe.apply(gray)
 
-
-    # Morphological operations to clean up edges
-    kernel = np.ones((1, 1), np.uint8)
-    edges = cv2.dilate(sobel_edges, kernel, iterations=1)
-    edges = cv2.erode(sobel_edges, kernel, iterations=1)
-
+    # Apply Unsharp Masking to sharpen lines 
+    blurred = cv2.GaussianBlur(enhanced, (9, 9), 20.0)
+    sharpened = cv2.addWeighted(enhanced, 2.0, blurred, -0.75, 0)
+    
+    # Apply Canny Edge Detection
+    edges = cv2.Canny(sharpened, threshold1=80, threshold2=150)
 
     # Save or return preprocessed image
     cv2.imwrite("preprocessed_edges.jpg", edges)
