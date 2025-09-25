@@ -1,3 +1,5 @@
+
+//@ts-ignore
 import { put } from '@vercel/blob';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -17,3 +19,11 @@ export async function POST(request: NextRequest) {
 export const config = {
   api: { bodyParser: false },  // Disable default body parsing for binary data
 };
+
+
+// import {NextRequest, NextResponse} from 'next/server'
+
+// export async function POST(request:NextRequest) {
+//   console.log("Hello!!")
+//   return NextResponse.json({msg:"Hi there"})
+// }
